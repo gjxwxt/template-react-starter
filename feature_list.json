@@ -1,0 +1,90 @@
+{
+  "lastUpdated": "2026-07-16",
+  "features": [
+    {
+      "id": "template-shell-foundation",
+      "name": "模板基础壳层",
+      "description": "登录页、应用壳层、页签导航、主题切换、异常页和内容区滚动等企业后台基础能力",
+      "dependencies": [],
+      "status": "done",
+      "evidence": "src/layouts/app-shell.tsx, src/pages/auth/login/page.tsx, src/pages/exception/not-found/page.tsx, src/pages/exception/server-error/page.tsx"
+    },
+    {
+      "id": "routing-permission-hybrid",
+      "name": "路由与权限双通道",
+      "description": "保留本地路由注册表，同时支持服务端菜单树适配为 allowedRouteIds、navigationGroups、permissionCodes",
+      "dependencies": ["template-shell-foundation"],
+      "status": "done",
+      "evidence": "src/app/router/routes.tsx, src/app/server-menu.ts, src/api/mock/server-menu.ts, src/api/mock/user-context.ts"
+    },
+    {
+      "id": "page-samples",
+      "name": "后台页面样例",
+      "description": "提供 Dashboard、任务列表、资产详情，以及用户、角色、部门、字典等模板页面，给业务项目直接参考",
+      "dependencies": ["template-shell-foundation"],
+      "status": "done",
+      "evidence": "src/pages/workbench/dashboard/page.tsx, src/pages/workbench/tasks/page.tsx, src/pages/assets/asset-detail/page.tsx, src/pages/system/users/page.tsx, src/pages/system/roles/page.tsx, src/pages/system/departments/page.tsx, src/pages/system/dictionaries/page.tsx"
+    },
+    {
+      "id": "system-management-matrix",
+      "name": "系统管理样例矩阵",
+      "description": "补齐用户、角色、部门、字典四类高频后台管理页面，覆盖标准列表、权限树、左树右表、主从表四种模板模式",
+      "dependencies": ["page-samples", "routing-permission-hybrid"],
+      "status": "done",
+      "evidence": "src/pages/system/users/page.tsx, src/pages/system/roles/page.tsx, src/pages/system/departments/page.tsx, src/pages/system/dictionaries/page.tsx, src/modules/system-management/page-helpers.tsx, src/api/mock/system.ts, src/api/mock/server-menu.ts"
+    },
+    {
+      "id": "ai-harness",
+      "name": "AI 协作骨架",
+      "description": "为后续 AI 开发提供统一的入口、文档路由、状态文件、验证脚本和交接模板",
+      "dependencies": ["template-shell-foundation", "routing-permission-hybrid", "page-samples"],
+      "status": "done",
+      "evidence": "AGENTS.md, AGENT.md, docs/, init.sh, progress.md, session-handoff.md"
+    },
+    {
+      "id": "release-quality-gate",
+      "name": "发布质量门禁",
+      "description": "补模板级 smoke / E2E，并把质量门禁并入 init 验证链路",
+      "dependencies": [
+        "routing-permission-hybrid",
+        "page-samples",
+        "system-management-matrix",
+        "ai-harness"
+      ],
+      "status": "done",
+      "evidence": "e2e/smoke.spec.cjs, docs/SMOKE_TESTING.md, init.sh"
+    },
+    {
+      "id": "release-permission-closure",
+      "name": "发布前权限收口",
+      "description": "把按钮级 permissionCode 确立为可选示范能力，补齐任务列表、资产详情等页面的权限接入点，同步 mock 链路",
+      "dependencies": ["release-quality-gate"],
+      "status": "done",
+      "evidence": "src/pages/system/*/page.tsx, src/pages/workbench/tasks/page.tsx, src/pages/assets/asset-detail/page.tsx, docs/ROUTING_AND_PERMISSIONS.md"
+    },
+    {
+      "id": "release-integration-ready",
+      "name": "真实接入就绪",
+      "description": "沉淀登录、壳层上下文、服务端菜单树和错误码适配的真实后端接入样例",
+      "dependencies": ["release-permission-closure"],
+      "status": "planned",
+      "evidence": "next: add real backend integration guide, sample payloads, and mock-to-real switch checklist"
+    },
+    {
+      "id": "release-publishing-ready",
+      "name": "发布准备收口",
+      "description": "整理 RC 发布检查清单、tag 规则、已知边界和使用说明，让模板进入可发布试点状态",
+      "dependencies": ["release-integration-ready"],
+      "status": "planned",
+      "evidence": "next: add release checklist, version and tag rules, and RC/stable guidance"
+    },
+    {
+      "id": "pilot-trial-acceptance",
+      "name": "试点验收与 Stable 决策",
+      "description": "通过 1 到 2 个业务试点验证模板主设计稳定，再决定是否进入 stable",
+      "dependencies": ["release-publishing-ready"],
+      "status": "planned",
+      "evidence": "next: run pilot integrations, collect blockers, and record RC-to-stable decision"
+    }
+  ]
+}
