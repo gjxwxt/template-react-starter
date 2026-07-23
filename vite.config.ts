@@ -32,6 +32,22 @@ export default defineConfig({
       },
     },
   },
+  resolve: {
+    alias: [
+      {
+        find: '@cvicse/react-utils',
+        replacement: '@gjxwxt/react-utils',
+      },
+      {
+        find: '@cvicse/icons',
+        replacement: '@gjxwxt/icons',
+      },
+      {
+        find: '@cvicse/react-style-base',
+        replacement: '@gjxwxt/react-style-base',
+      },
+    ],
+  },
   server: {
     watch: {
       usePolling: true,
