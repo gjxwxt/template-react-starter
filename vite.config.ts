@@ -18,9 +18,6 @@ export default defineConfig({
             ) {
               return 'vendor-react';
             }
-            if (id.includes('@ant-design/icons')) {
-              return 'vendor-icons';
-            }
             if (id.includes('antd/') || id.includes('antd-style/')) {
               return 'vendor-antd';
             }
