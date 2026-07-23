@@ -42,7 +42,8 @@ export const AppRouter: React.FC = () => {
             </ProtectedRoute>
           }
         >
-          <Route path="/" element={<Navigate to={templateAppConfig.auth.homePath} replace />} />
+          {/* 子路径部署下，入口页用 index route 比 path="/" 更稳定。 */}
+          <Route index element={<Navigate to={templateAppConfig.auth.homePath} replace />} />
           {appRoutes.map((route) => (
             <Route
               key={route.path}
