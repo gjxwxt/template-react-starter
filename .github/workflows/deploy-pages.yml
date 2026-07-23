@@ -86,6 +86,7 @@ jobs:
         if: ${{ steps.pages_preflight.outputs.deploy_ready == 'true' }}
         run: pnpm build:pages
         env:
+          GITHUB_PACKAGES_TOKEN: ${{ secrets.GITHUB_PACKAGES_TOKEN != '' && secrets.GITHUB_PACKAGES_TOKEN || github.token }}
           VITE_PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}/
 
       - name: Upload Pages Artifact

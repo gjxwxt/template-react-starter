@@ -23,15 +23,16 @@ const flattenTreeNodeBranch = (
   nodes: SystemTreeNode[],
   parentLabels: string[] = [],
 ): TreeOption[] => {
-  return nodes.flatMap((node) => {
+  return nodes.reduce<TreeOption[]>((result, node) => {
     const currentLabels = [...parentLabels, node.title];
     const currentOption = {
       label: currentLabels.join(' / '),
       value: node.key,
     };
 
-    return [currentOption, ...flattenTreeNodeBranch(node.children ?? [], currentLabels)];
-  });
+    result.push(currentOption, ...flattenTreeNodeBranch(node.children ?? [], currentLabels));
+    return result;
+  }, []);
 };
 
 export const buildTreeOptions = (nodes: SystemTreeNode[], rootOption?: TreeOption) => {
