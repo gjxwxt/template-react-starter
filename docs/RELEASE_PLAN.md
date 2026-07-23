@@ -161,6 +161,7 @@
 - 版本命名与 tag 规则
 - 分支、MR、流水线发版约束
 - 外网开发与内网迁移的源配置策略
+- 模板独立仓库的双目标导出与同步策略
 
 **建议产出**
 
@@ -168,6 +169,7 @@
 - 版本和 tag 规则
 - 模板仓库单向同步设计与导出策略
 - `RC` 和 `stable` 的区别说明
+- 内网模板独立仓库落地计划
 
 **建议规则**
 
@@ -184,6 +186,20 @@
   - 当前边界是什么
   - 发布前要跑什么
   - RC / stable 怎么打 tag
+  - GitHub 外网模板仓库怎么同步
+  - GitLab 内网模板仓库下一步怎么接
+
+**当前执行顺序补充**
+
+`release-publishing-ready` 阶段中，模板独立仓库相关工作按下面顺序推进：
+
+1. 先把 `scripts/template/export-template-repo.mjs` 改造成 `github|gitlab` 双 target
+2. 给 GitLab verify 增加模板导出 dry-run
+3. 新建内网模板独立仓库并配置同步认证变量
+4. 给 `.gitlab-ci.yml` 增加手工 `sync_template_repo` job
+5. 等手工链路稳定后，再决定是否自动同步
+
+不允许跳过第 1、2 步直接做 GitLab 自动同步。否则出问题时很难区分是导出产物错误、变量错误，还是认证 / 分支保护错误。
 
 ### 5. `pilot-trial-acceptance`
 

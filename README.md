@@ -32,6 +32,10 @@
 - 个人中心弹窗：资料维护 + 修改密码
 - `lint / typecheck / build / smoke` 发布前质量门禁
 
+## GitHub Pages 预览部署
+
+独立模板仓库已集成 GitHub Pages 自动化部署。构建命令使用 `pnpm build:pages`（环境变量 `VITE_PUBLIC_BASE_PATH` + 自动生成 `dist/404.html` 保证 `BrowserRouter` 刷新回退）。
+
 ## 快速开始
 
 ### 环境要求
@@ -330,3 +334,11 @@ src/
 ## GitHub Packages 安装准备
 
 独立模板仓库默认从 GitHub Packages 安装组件依赖。首次安装前，请按 [`.npmrc.example`](./.npmrc.example) 准备根目录 `.npmrc`，并提供具备 `read:packages` 权限的 `GITHUB_PACKAGES_TOKEN`。
+
+`@gjxwxt/*` 相关依赖会在导出阶段被改写为真实版本号，不再保留 monorepo 内的 `workspace:*` 写法。
+
+## GitHub Packages 安装准备
+
+独立模板仓库默认从 GitHub Packages 安装组件依赖。首次安装前，请按 [`.npmrc.example`](./.npmrc.example) 准备根目录 `.npmrc`，并提供具备 `read:packages` 权限的 `GITHUB_PACKAGES_TOKEN`。
+
+`@gjxwxt/*` 相关依赖会在导出阶段被改写为真实版本号，不再保留 monorepo 内的 `workspace:*` 写法。
