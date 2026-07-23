@@ -35,7 +35,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: pnpm
 
       - name: Setup npmrc for GitHub Packages
         run: cp .npmrc.example .npmrc
@@ -43,22 +42,59 @@ jobs:
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
         env:
-          GITHUB_PACKAGES_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_PACKAGES_TOKEN: ${{ secrets.GITHUB_PACKAGES_TOKEN != '' && secrets.GITHUB_PACKAGES_TOKEN || github.token }}
+
+      - name: Check Pages readiness
+        id: pages_preflight
+        run: |
+          pages_api="https://api.github.com/repos/${GITHUB_REPOSITORY}/pages"
+          status_code="$(
+            curl --silent --show-error --location               --output /tmp/pages-response.json               --write-out '%{http_code}'               --header "Authorization: Bearer ${PAGES_TOKEN}"               --header 'Accept: application/vnd.github+json'               "$pages_api"
+          )"
+
+          deploy_ready=false
+          enablement=false
+
+          if [ "$status_code" = '200' ]; then
+            deploy_ready=true
+          elif [ "$status_code" = '404' ] && [ "${PAGES_ADMIN_TOKEN_AVAILABLE}" = 'true' ]; then
+            deploy_ready=true
+            enablement=true
+          fi
+
+          echo "deploy_ready=$deploy_ready" >> "$GITHUB_OUTPUT"
+          echo "enablement=$enablement" >> "$GITHUB_OUTPUT"
+          echo "status_code=$status_code" >> "$GITHUB_OUTPUT"
+        env:
+          PAGES_TOKEN: ${{ secrets.GITHUB_PAGES_TOKEN != '' && secrets.GITHUB_PAGES_TOKEN || secrets.GITHUB_PACKAGES_TOKEN != '' && secrets.GITHUB_PACKAGES_TOKEN || github.token }}
+          PAGES_ADMIN_TOKEN_AVAILABLE: ${{ secrets.GITHUB_PAGES_TOKEN != '' || secrets.GITHUB_PACKAGES_TOKEN != '' }}
 
       - name: Setup Pages
         id: pages
+        if: ${{ steps.pages_preflight.outputs.deploy_ready == 'true' }}
         uses: actions/configure-pages@v5
+        with:
+          token: ${{ secrets.GITHUB_PAGES_TOKEN != '' && secrets.GITHUB_PAGES_TOKEN || secrets.GITHUB_PACKAGES_TOKEN != '' && secrets.GITHUB_PACKAGES_TOKEN || github.token }}
+          enablement: ${{ steps.pages_preflight.outputs.enablement }}
+
+      - name: Skip Pages deployment when site is not configured
+        if: ${{ steps.pages_preflight.outputs.deploy_ready != 'true' }}
+        run: |
+          echo "::warning::GitHub Pages is not enabled for ${GITHUB_REPOSITORY}. Enable Pages in repository settings or provide GITHUB_PAGES_TOKEN/GITHUB_PACKAGES_TOKEN with repo or pages write permission."
 
       - name: Build Pages
+        if: ${{ steps.pages_preflight.outputs.deploy_ready == 'true' }}
         run: pnpm build:pages
         env:
           VITE_PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}/
 
       - name: Upload Pages Artifact
+        if: ${{ steps.pages_preflight.outputs.deploy_ready == 'true' }}
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
       - name: Deploy to GitHub Pages
         id: deployment
+        if: ${{ steps.pages_preflight.outputs.deploy_ready == 'true' }}
         uses: actions/deploy-pages@v4
