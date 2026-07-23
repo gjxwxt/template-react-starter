@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import process from 'node:process';
 
-const isNodeModulePackage = (id, packageName) => {
+const isNodeModulePackage = (id: string, packageName: string) => {
   const normalized = id.replace(/\\/g, '/');
   return normalized.includes(`/node_modules/${packageName}/`);
 };
@@ -14,7 +14,7 @@ export default defineConfig({
     chunkSizeWarningLimit: 1200,
     rollupOptions: {
       output: {
-        manualChunks(id) {
+        manualChunks(id: string) {
           if (id.includes('node_modules')) {
             if (
               isNodeModulePackage(id, 'echarts') ||
