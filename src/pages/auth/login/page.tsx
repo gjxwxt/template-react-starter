@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { ProButton } from '@gjxwxt/react-components';
 import { loginByPassword } from '../../../api';
 import { useAppContext } from '../../../app/providers';
-import { templateAppConfig } from '../../../app/config';
+import { resolveTemplateAssetPath, templateAppConfig } from '../../../app/config';
 
 type LoginFormValues = {
   captcha: string;
@@ -44,6 +44,12 @@ const LoginPage: React.FC = () => {
     typeof location.state.from === 'string'
       ? location.state.from
       : templateAppConfig.auth.homePath;
+  const loginPageStyle = React.useMemo(
+    () => ({
+      backgroundImage: `url(${resolveTemplateAssetPath('png/loginbkg.png')})`,
+    }),
+    [],
+  );
 
   const drawCaptcha = React.useCallback(() => {
     const canvas = captchaCanvasRef.current;
@@ -127,7 +133,7 @@ const LoginPage: React.FC = () => {
   );
 
   return (
-    <div className="login-page">
+    <div className="login-page" style={loginPageStyle}>
       <div className="login-page__content">
         <div className="login-page__card">
           <div className="login-page__card-inner">

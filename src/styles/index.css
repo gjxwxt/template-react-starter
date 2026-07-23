@@ -532,7 +532,6 @@ select {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-image: url('/png/loginbkg.png');
   background-repeat: no-repeat;
   background-size: 100% 100%;
   background-position: center;

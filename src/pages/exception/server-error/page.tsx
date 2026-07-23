@@ -1,9 +1,9 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { useAppContext } from '../../../app/providers';
-import { templateAppConfig } from '../../../app/config';
 import { TemplateException } from '../../../components/feedback';
+import { resolveTemplateAssetPath, templateAppConfig } from '../../../app/config';
+import { useAppContext } from '../../../app/providers';
 
 interface ServerErrorLocationState {
   fromPath?: string;
@@ -17,7 +17,7 @@ const ServerErrorPage: React.FC = () => {
 
   return (
     <TemplateException
-      imageSrc="/png/500.png"
+      imageSrc={resolveTemplateAssetPath('png/500.png')}
       title={t.pages.serverError.title}
       subtitle={t.pages.serverError.subTitle}
       description={t.serverError}

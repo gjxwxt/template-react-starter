@@ -1,9 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useAppContext } from '../../../app/providers';
-import { templateAppConfig } from '../../../app/config';
 import { TemplateException } from '../../../components/feedback';
+import { resolveTemplateAssetPath, templateAppConfig } from '../../../app/config';
+import { useAppContext } from '../../../app/providers';
 
 const NotFoundPage: React.FC = () => {
   const { t } = useAppContext();
@@ -11,7 +11,7 @@ const NotFoundPage: React.FC = () => {
 
   return (
     <TemplateException
-      imageSrc="/png/404.png"
+      imageSrc={resolveTemplateAssetPath('png/404.png')}
       title={t.pages.notFound.title}
       subtitle={t.pages.notFound.subTitle}
       description={t.notFound}

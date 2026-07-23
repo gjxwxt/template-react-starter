@@ -10,6 +10,28 @@ const parseNavigationMode = (value: string | undefined) => {
   return value === 'server' ? 'server' : 'local';
 };
 
+const normalizePublicBasePath = (value: string | undefined) => {
+  const trimmed = value?.trim();
+
+  if (!trimmed || trimmed === '/') {
+    return '/';
+  }
+
+  const withLeadingSlash = trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+  return withLeadingSlash.endsWith('/') ? withLeadingSlash : `${withLeadingSlash}/`;
+};
+
+// Pages 这类子路径部署场景下，路由 basename 和静态资源前缀必须共用同一份基准。
+export const templatePublicBasePath = normalizePublicBasePath(import.meta.env.BASE_URL);
+
+export const templateRouterBasename =
+  templatePublicBasePath === '/' ? undefined : templatePublicBasePath.replace(/\/$/, '');
+
+export const resolveTemplateAssetPath = (assetPath: string) => {
+  const normalizedAssetPath = assetPath.replace(/^\/+/, '');
+  return `${templatePublicBasePath}${normalizedAssetPath}`;
+};
+
 export interface TemplateAppConfig {
   api: {
     baseUrl: string;
@@ -57,9 +79,9 @@ export const templateAppConfig: TemplateAppConfig = {
   },
   branding: {
     logoAlt: 'CVICSE',
-    logoSrc: '/png/cvicse-logo.png',
+    logoSrc: resolveTemplateAssetPath('png/cvicse-logo.png'),
     shellLogoAlt: 'INFORS',
-    shellLogoSrc: '/png/infors-sidebar-favicon.png',
+    shellLogoSrc: resolveTemplateAssetPath('png/infors-sidebar-favicon.png'),
     shellLogoWidth: 69,
     shellLogoHeight: 24,
     shellCollapsedLogoWidth: 56,
